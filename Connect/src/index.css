@@ -1,0 +1,37 @@
+:root {
+  font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #263b42;
+  background: #f4f7f6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* { box-sizing: border-box; }
+html, body { min-width: 320px; min-height: 100%; margin: 0; background: #f4f7f6; }
+body { min-height: 100vh; }
+#root { width: 100%; min-height: 100vh; margin: 0; border: 0; text-align: left; }
+h1, h2, h3, h4, h5, h6 { color: #17343a; letter-spacing: -0.035em; }
+p { margin: 0; }
+
+.MuiPaper-root { background-image: none !important; border-radius: 18px !important; }
+.MuiAppBar-root { border-radius: 0 !important; }
+.MuiButton-root { border-radius: 11px; font-weight: 650; letter-spacing: 0; text-transform: none; }
+.MuiButton-containedPrimary { background-color: #167f73 !important; box-shadow: none; }
+.MuiButton-containedPrimary:hover { background-color: #12695f !important; box-shadow: 0 6px 16px rgba(22,127,115,.18); }
+.MuiButton-outlinedPrimary, .MuiButton-textPrimary { color: #167f73; }
+.MuiOutlinedInput-root { border-radius: 12px; background: #fff; }
+.MuiOutlinedInput-notchedOutline { border-color: #dce6e4; }
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline { border-color: #9bbab4; }
+.MuiFilledInput-root { border-radius: 12px 12px 0 0; background: #f3f7f6; }
+.MuiChip-root { font-weight: 600; }
+.MuiAlert-root { border-radius: 12px; }
+.leaflet-container { font-family: inherit; }
+.leaflet-popup-content-wrapper { border-radius: 12px; }
+.leaflet-popup-content { margin: 14px 16px; }
+
+@media (max-width: 600px) {
+  .MuiContainer-root { padding-left: 18px !important; padding-right: 18px !important; }
+  .MuiPaper-root { border-radius: 16px !important; }
+}
