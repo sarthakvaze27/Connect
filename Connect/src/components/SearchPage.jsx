@@ -24,13 +24,22 @@ L.Icon.Default.mergeOptions({
 function MapController({ coords }) {
   const map = useMap();
   useEffect(() => {
-    if (coords.lat && coords.lon) {
-      setTimeout(() => {
-        map.invalidateSize(); 
-        map.flyTo([coords.lat, coords.lon], 13);
-      }, 500); // Delay ensures the container has finished rendering
-    }
-  }, [coords, map]);
+    const invalidateSize = () => {
+      map.invalidateSize({ pan: true, animate: false });
+      map.setView([coords.lat, coords.lon], 13, { animate: false });
+    };
+    const container = map.getContainer();
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(invalidateSize) : null;
+    if (observer && container.parentElement) observer.observe(container.parentElement);
+    const timer = window.setTimeout(() => {
+      invalidateSize();
+      if (coords.lat && coords.lon) map.flyTo([coords.lat, coords.lon], 13);
+    }, 250);
+    return () => {
+      window.clearTimeout(timer);
+      observer?.disconnect();
+    };
+  }, [coords.lat, coords.lon, map]);
   return null;
 }
 
@@ -130,7 +139,7 @@ const SearchPage = () => {
           <Grid container spacing={3}>
             
             {/* SEARCH SIDEBAR */}
-            <Grid item xs={12} md={4} lg={3.5}>
+            <Grid size={{ xs: 12, md: 4, lg: 4 }}>
               <Paper elevation={0} sx={{ p: 3, borderRadius: 4, border: '1px solid #DFE8E6' }}>
                 <Typography variant="h5" fontWeight="900" sx={{ color: '#17343A', mb: 1 }}>Expert Locator</Typography>
                 <Stack spacing={3}>
@@ -162,9 +171,10 @@ const SearchPage = () => {
             </Grid>
             
             {/* FIXED MAP CONTAINER */}
-            <Grid item xs={12} md={8} lg={8.5}>
+            <Grid size={{ xs: 12, md: 8, lg: 8 }}>
               <Box sx={{ 
                 height: { xs: '350px', md: '550px' }, 
+                minHeight: { xs: '350px', md: '550px' }, 
                 width: '100%', 
                 borderRadius: 6, 
                 overflow: 'hidden', 
@@ -173,12 +183,11 @@ const SearchPage = () => {
                 bgcolor: '#eee' 
               }}>
                 <MapContainer 
-                  key={`${coords.lat}-${coords.lon}`} 
                   center={[coords.lat, coords.lon]} 
                   zoom={13} 
                   style={{ height: '100%', width: '100%' }}
                 >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
                   <MapClickHandler setCoords={setCoords} setAddressSearch={setAddressSearch} />
                   <MapController coords={coords} />
                   <Marker position={[coords.lat, coords.lon]}><Popup>Search Center</Popup></Marker>
@@ -202,7 +211,7 @@ const SearchPage = () => {
         </Typography>
         <Grid container spacing={3}>
           {results.map(pro => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={pro.id || pro._id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={pro.id || pro._id}>
               <ProCard pro={pro} isUnlocking={unlockingId === (pro.id || pro._id)} onUnlock={handleUnlock} />
             </Grid>
           ))}
@@ -213,3 +222,5 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
+
+

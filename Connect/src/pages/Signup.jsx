@@ -4,6 +4,15 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { MyLocation, CheckCircle } from '@mui/icons-material';
 import api from '../services/api';
 
+const getApiError = (err, fallback) => {
+    const detail = err.response?.data?.detail;
+    if (typeof detail === "string") return detail;
+    if (Array.isArray(detail)) return detail.map((item) => {
+        const field = Array.isArray(item.loc) ? item.loc[item.loc.length - 1] : "Field";
+        return String(field) + ": " + String(item.msg);
+    }).join("; ");
+    return fallback;
+};
 const Signup = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -45,7 +54,7 @@ const Signup = () => {
             alert("Signup successful!");
             navigate('/login');
         } catch (err) {
-            setError(err.response?.data?.detail || "Signup failed");
+            setError(getApiError(err, "Signup failed"));
         }
     };
 
@@ -58,9 +67,9 @@ const Signup = () => {
                 <form onSubmit={handleSignup}>
                     <TextField fullWidth label="Full Name" margin="normal" required
                         onChange={(e) => setFormData({...formData, full_name: e.target.value})} />
-                    <TextField fullWidth label="Email" margin="normal" required
+                    <TextField fullWidth type="email" label="Email" margin="normal" required
                         onChange={(e) => setFormData({...formData, email: e.target.value})} />
-                    <TextField fullWidth label="Password" type="password" margin="normal" required
+                    <TextField fullWidth label="Password" type="password" inputProps={{ minLength: 8, maxLength: 72 }} margin="normal" required
                         onChange={(e) => setFormData({...formData, password: e.target.value})} />
                     
                     <Select fullWidth value={formData.role} sx={{ mt: 2, mb: 1 }}
@@ -91,4 +100,5 @@ const Signup = () => {
 };
 
 export default Signup;
+
 

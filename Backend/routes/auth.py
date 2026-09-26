@@ -4,7 +4,6 @@ from fastapi import APIRouter, HTTPException, status,Depends
 from models.user import UserPublic, UserAuth
 from auth_utils import hash_password, verify_password, create_access_token
 from database import db
-from fastapi.security import OAuth2PasswordRequestForm
 from bson import ObjectId
 import uuid
 from datetime import datetime
@@ -67,11 +66,9 @@ async def signup(user_in: UserAuth, referral_code: str = None):
     return user_dict
 
 @router.post("/login")
-# Change 'request: LoginRequest' to 'form_data: OAuth2PasswordRequestForm = Depends()'
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    # Swagger sends the email into the 'username' field
-    email = form_data.username
-    password = form_data.password
+async def login(request: LoginRequest):
+    email = request.email
+    password = request.password
 
     # Now find the user in DB as usual
     user = await db.users.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}})
